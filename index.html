@@ -7,7 +7,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FIREBASE: Google Firebase SDK scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -61,7 +60,7 @@
                      <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Apna Restaurant</h1>
                      <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Jahan har dish banti hai pyaar se, sirf aapke liye.</p>
                      <a href="#menu" class="nav-link bg-amber-500 text-gray-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-amber-600 transition-transform transform hover:scale-105 duration-300 inline-block">
-                         Order Now
+                          Order Now
                      </a>
                  </div>
              </div>
@@ -156,9 +155,27 @@
                     <option value="veg">Veg</option>
                     <option value="non-veg">Non-Veg</option>
                 </select>
-                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein</label>
-                <input type="file" id="food-image-upload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-gray-900 hover:file:bg-amber-600" required>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Food Photo</label>
+                    <div id="upload-options" class="grid grid-cols-2 gap-4">
+                        <label for="food-image-upload" class="w-full text-center cursor-pointer bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors">Upload File</label>
+                        <input type="file" id="food-image-upload" accept="image/*" class="hidden">
+                        <button type="button" id="take-photo-btn" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">Take Photo</button>
+                    </div>
+                </div>
+
+                <div id="camera-view" class="hidden mt-2">
+                    <video id="camera-stream" class="w-full rounded-md" autoplay playsinline></video>
+                    <div class="grid grid-cols-2 gap-4 mt-2">
+                        <button type="button" id="capture-btn" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">Capture</button>
+                        <button type="button" id="cancel-camera-btn" class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-400">Cancel</button>
+                    </div>
+                </div>
+                <canvas id="photo-canvas" class="hidden"></canvas>
+
                 <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-48 object-cover rounded-md mt-2">
+                
                 <button type="submit" class="w-full bg-amber-500 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-amber-600">Add Item</button>
             </form>
         </div>
@@ -169,7 +186,6 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- FIREBASE CONFIG ---
-        // ✅ Your personal Firebase configuration is now added here.
         const firebaseConfig = {
             apiKey: "AIzaSyBcLQ_WEelNur65puPuw7BlapaK5edt5AE",
             authDomain: "apna-restaurant-menu.firebaseapp.com",
@@ -182,12 +198,13 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(); // Firestore database ka reference
+        const db = firebase.firestore();
 
         // --- DATA & CONFIG ---
-        let menuData = []; // Data ab Firebase se aayega
+        let menuData = [];
         let cart = [];
-        let isAdmin = false; 
+        let isAdmin = false;
+        let cameraStream = null;
         const ADMIN_PASSWORD = "9120322488";
         const ADMIN_WHATSAPP = "919120322488";
 
@@ -211,6 +228,15 @@
         const addFoodForm = document.getElementById('add-food-form');
         const imageUploadInput = document.getElementById('food-image-upload');
         const imagePreview = document.getElementById('image-preview');
+        // ✅ NEW: Camera Elements
+        const takePhotoBtn = document.getElementById('take-photo-btn');
+        const cameraView = document.getElementById('camera-view');
+        const cameraStreamEl = document.getElementById('camera-stream');
+        const captureBtn = document.getElementById('capture-btn');
+        const cancelCameraBtn = document.getElementById('cancel-camera-btn');
+        const photoCanvas = document.getElementById('photo-canvas');
+        const uploadOptions = document.getElementById('upload-options');
+
 
         // --- PAGE NAVIGATION ---
         const showSection = (hash) => {
@@ -271,7 +297,7 @@
             db.collection("menuItems").onSnapshot((snapshot) => {
                 menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 console.log("Menu Firebase se load ho gaya:", menuData);
-                filterAndRenderMenu(); // Jab bhi data badlega, menu apne aap refresh ho jayega
+                filterAndRenderMenu();
             });
         };
 
@@ -317,7 +343,6 @@
                 if (password === ADMIN_PASSWORD) {
                     if (confirm("Kya aap sach mein is item ko delete karna chahte hain?")) {
                         const itemId = deleteBtn.dataset.id;
-                        // FIREBASE: Delete item from Firestore
                         db.collection("menuItems").doc(itemId).delete()
                             .then(() => alert("Item successfully delete ho gaya hai."))
                             .catch(err => alert("Error: " + err.message));
@@ -353,6 +378,14 @@
         });
 
         // --- ADMIN LOGIC ---
+        const stopCamera = () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+            cameraView.classList.add('hidden');
+            uploadOptions.classList.remove('hidden');
+        };
+
         adminLoginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const password = prompt("Admin Password Daalein:");
@@ -366,7 +399,13 @@
         });
         closeAdminPanelBtn.addEventListener('click', () => {
             adminPanel.classList.add('opacity-0');
-            setTimeout(() => { adminPanel.classList.add('hidden'); addFoodForm.reset(); imagePreview.classList.add('hidden'); }, 300);
+            stopCamera();
+            setTimeout(() => { 
+                adminPanel.classList.add('hidden'); 
+                addFoodForm.reset(); 
+                imagePreview.classList.add('hidden');
+                imagePreview.src = '';
+            }, 300);
         });
         imageUploadInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -376,41 +415,72 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        // ✅ NEW: Camera Logic
+        takePhotoBtn.addEventListener('click', async () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                    cameraStreamEl.srcObject = cameraStream;
+                    uploadOptions.classList.add('hidden');
+                    cameraView.classList.remove('hidden');
+                } catch (err) {
+                    console.error("Camera access error:", err);
+                    alert("Camera access nahi ho pa raha. Please permission check karein.");
+                }
+            } else {
+                alert("Aapke browser mein camera feature support nahi karta.");
+            }
+        });
+
+        captureBtn.addEventListener('click', () => {
+            photoCanvas.width = cameraStreamEl.videoWidth;
+            photoCanvas.height = cameraStreamEl.videoHeight;
+            const context = photoCanvas.getContext('2d');
+            context.drawImage(cameraStreamEl, 0, 0, photoCanvas.width, photoCanvas.height);
+            imagePreview.src = photoCanvas.toDataURL('image/jpeg');
+            imagePreview.classList.remove('hidden');
+            stopCamera();
+        });
+
+        cancelCameraBtn.addEventListener('click', () => {
+            stopCamera();
+        });
+
+        // ✅ MODIFIED: Form Submission Logic
         addFoodForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const imageFile = imageUploadInput.files[0];
-            if (!imageFile) { alert("Please ek photo upload karein."); return; }
             
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64Image = reader.result; 
-                
-                const newItem = {
-                    name: document.getElementById('food-name').value,
-                    price: parseInt(document.getElementById('food-price').value),
-                    description: document.getElementById('food-description').value,
-                    image: base64Image,
-                    type: document.getElementById('food-type').value,
-                };
-                
-                // FIREBASE: Add new item to Firestore
-                db.collection("menuItems").add(newItem)
-                    .then((docRef) => {
-                        alert(`'${newItem.name}' menu me add ho gaya hai!`);
-                        closeAdminPanelBtn.click();
-                    })
-                    .catch((error) => {
-                        console.error("Error adding document: ", error);
-                        alert("Error: Item add nahi ho saka. Details ke liye console check karein.");
-                    });
+            const base64Image = imagePreview.src;
+            if (!base64Image || imagePreview.classList.contains('hidden')) {
+                alert("Please ek photo upload ya capture karein.");
+                return;
+            }
+            
+            const newItem = {
+                name: document.getElementById('food-name').value,
+                price: parseInt(document.getElementById('food-price').value),
+                description: document.getElementById('food-description').value,
+                image: base64Image, // Directly use base64 from preview
+                type: document.getElementById('food-type').value,
             };
-            reader.readAsDataURL(imageFile);
+            
+            db.collection("menuItems").add(newItem)
+                .then((docRef) => {
+                    alert(`'${newItem.name}' menu me add ho gaya hai!`);
+                    // ✅ FIX: Auto-close the panel on success
+                    closeAdminPanelBtn.click();
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert("Error: Item add nahi ho saka. Details ke liye console check karein.");
+                });
         });
 
         // --- INITIALIZATION ---
         document.getElementById('year').textContent = new Date().getFullYear();
         showSection(window.location.hash || '#home');
-        fetchMenuRealtime(); // Page load hote hi Firebase se menu load karo
+        fetchMenuRealtime();
     });
     </script>
 </body>
