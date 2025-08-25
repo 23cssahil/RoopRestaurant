@@ -7,16 +7,16 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- FIREBASE: Google Firebase SDK scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Custom Styles */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #111827; /* bg-gray-900 */
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #111827; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
@@ -156,7 +156,7 @@
                     <option value="veg">Veg</option>
                     <option value="non-veg">Non-Veg</option>
                 </select>
-                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein (Size 2MB se kam)</label>
+                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein</label>
                 <input type="file" id="food-image-upload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-gray-900 hover:file:bg-amber-600" required>
                 <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-48 object-cover rounded-md mt-2">
                 <button type="submit" class="w-full bg-amber-500 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-amber-600">Add Item</button>
@@ -164,21 +164,32 @@
         </div>
     </div>
     
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
+        // --- FIREBASE CONFIG ---
+        // ✅ Your personal Firebase configuration is now added here.
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcLQ_WEelNur65puPuw7BlapaK5edt5AE",
+            authDomain: "apna-restaurant-menu.firebaseapp.com",
+            projectId: "apna-restaurant-menu",
+            storageBucket: "apna-restaurant-menu.appspot.com",
+            messagingSenderId: "811257564867",
+            appId: "1:811257564867:web:d7f2f59f95a16ed5421c76",
+            measurementId: "G-915T21CDM3"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(); // Firestore database ka reference
+
         // --- DATA & CONFIG ---
-        let menuData = [];
+        let menuData = []; // Data ab Firebase se aayega
         let cart = [];
         let isAdmin = false; 
         const ADMIN_PASSWORD = "9120322488";
         const ADMIN_WHATSAPP = "919120322488";
-        const initialMenuData = [
-            { id: 1, name: "Paneer Tikka", price: 250, description: "Tandoor me bhuna hua masaledaar paneer.", image: "https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "veg" },
-            { id: 2, name: "Chicken Malai Kebab", price: 350, description: "Creamy aur juicy chicken kebab.", image: "https://images.pexels.com/photos/106344/pexels-photo-106344.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "non-veg" },
-            { id: 3, name: "Shahi Paneer", price: 320, description: "Mughlai gravy me bana creamy paneer.", image: "https://images.pexels.com/photos/4049941/pexels-photo-4049941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "veg" },
-            { id: 4, name: "Butter Chicken", price: 450, description: "Hamara special makhani gravy wala chicken.", image: "https://images.pexels.com/photos/10580571/pexels-photo-10580571.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "non-veg" },
-        ];
 
         // --- ELEMENTS ---
         const sections = document.querySelectorAll('.section');
@@ -201,26 +212,6 @@
         const imageUploadInput = document.getElementById('food-image-upload');
         const imagePreview = document.getElementById('image-preview');
 
-        // --- DATA MANAGEMENT (LOCAL STORAGE) ---
-        const saveMenuData = () => {
-            try {
-                localStorage.setItem('restaurantMenu', JSON.stringify(menuData));
-            } catch (e) {
-                console.error("Error saving to localStorage:", e);
-                alert("Error: Menu save nahi ho saka. Upload ki gayi image bahut badi ho sakti hai. Kripya 2MB se chhoti image upload karein.");
-            }
-        };
-
-        const loadMenuData = () => {
-            const savedMenu = localStorage.getItem('restaurantMenu');
-            if (savedMenu) {
-                menuData = JSON.parse(savedMenu);
-            } else {
-                menuData = initialMenuData;
-                saveMenuData();
-            }
-        };
-
         // --- PAGE NAVIGATION ---
         const showSection = (hash) => {
             const id = hash ? hash.substring(1) : 'home';
@@ -231,33 +222,20 @@
             });
             window.scrollTo(0, 0);
         };
-
-        navLinks.forEach(link => link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const hash = e.currentTarget.getAttribute('href');
-            history.pushState(null, null, hash);
-            showSection(hash);
-        }));
+        navLinks.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); const hash = e.currentTarget.getAttribute('href'); history.pushState(null, null, hash); showSection(hash); }));
         window.addEventListener('popstate', () => showSection(window.location.hash || '#home'));
         
         // --- MENU LOGIC ---
         const renderMenu = (items) => {
-            menuGrid.innerHTML = items.length === 0 ? `<p class="text-gray-400 text-center col-span-full text-xl">Koi item nahi mila.</p>` : items.map(item => {
-                const adminControls = isAdmin ? `
-                    <div class="p-4 bg-gray-900">
-                        <button data-id="${item.id}" class="delete-item-btn w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
-                            Delete Item
-                        </button>
-                    </div>` : '';
+            menuGrid.innerHTML = items.length === 0 ? `<p class="text-gray-400 text-center col-span-full text-xl">Menu load ho raha hai ya khaali hai...</p>` : items.map(item => {
+                const adminControls = isAdmin ? `<div class="p-4 bg-gray-900"><button data-id="${item.id}" class="delete-item-btn w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">Delete Item</button></div>` : '';
                 return `
                 <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col">
                     <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
                     <div class="p-6 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-bold text-white">${item.name}</h3>
-                            <span class="flex-shrink-0 ml-2 px-3 py-1 text-sm rounded-full ${item.type === 'veg' ? 'bg-green-600' : 'bg-red-600'} text-white">
-                                ${item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                            </span>
+                            <span class="flex-shrink-0 ml-2 px-3 py-1 text-sm rounded-full ${item.type === 'veg' ? 'bg-green-600' : 'bg-red-600'} text-white">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</span>
                         </div>
                         <p class="text-gray-400 mb-4 flex-grow">${item.description}</p>
                         <div class="flex items-center justify-between mt-auto">
@@ -287,10 +265,18 @@
                 filterAndRenderMenu();
             }
         });
+        
+        // --- FIREBASE: Realtime Menu Loading ---
+        const fetchMenuRealtime = () => {
+            db.collection("menuItems").onSnapshot((snapshot) => {
+                menuData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log("Menu Firebase se load ho gaya:", menuData);
+                filterAndRenderMenu(); // Jab bhi data badlega, menu apne aap refresh ho jayega
+            });
+        };
 
         // --- CART LOGIC ---
         const updateCartDisplay = () => {
-             // FIX: More responsive cart item layout
             cartItemsContainer.innerHTML = cart.length === 0 ? `<p class="text-gray-400 text-center py-8">Aapka cart khaali hai.</p>` : cart.map(item => `
                 <div class="flex items-center gap-4 mb-4 pb-4 border-b border-gray-700">
                     <img src="${item.image}" alt="${item.name}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover flex-shrink-0">
@@ -308,7 +294,6 @@
                     <button data-id="${item.id}" class="remove-from-cart text-red-500 hover:text-red-400 flex-shrink-0 text-2xl sm:text-3xl">&times;</button>
                 </div>
             `).join('');
-            
             const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             cartSubtotalEl.textContent = `₹${subtotal}`;
@@ -316,41 +301,35 @@
             cartFooter.classList.toggle('hidden', cart.length === 0);
             cartCountEl.classList.toggle('hidden', cart.length === 0);
         };
-
         menuGrid.addEventListener('click', (e) => {
             const addBtn = e.target.closest('.add-to-cart-btn');
             const deleteBtn = e.target.closest('.delete-item-btn');
-
             if (addBtn) {
-                const itemId = parseInt(addBtn.dataset.id);
+                const itemId = addBtn.dataset.id;
                 const itemToAdd = menuData.find(item => item.id === itemId);
                 const existingItem = cart.find(item => item.id === itemId);
                 if (existingItem) existingItem.quantity++;
                 else cart.push({ ...itemToAdd, quantity: 1 });
                 updateCartDisplay();
             }
-
             if (deleteBtn) {
                 const password = prompt("Item delete karne ke liye Admin Password daalein:");
                 if (password === ADMIN_PASSWORD) {
                     if (confirm("Kya aap sach mein is item ko delete karna chahte hain?")) {
-                        const itemId = parseInt(deleteBtn.dataset.id);
-                        menuData = menuData.filter(item => item.id !== itemId);
-                        saveMenuData();
-                        filterAndRenderMenu();
-                        alert("Item successfully delete ho gaya hai.");
+                        const itemId = deleteBtn.dataset.id;
+                        // FIREBASE: Delete item from Firestore
+                        db.collection("menuItems").doc(itemId).delete()
+                            .then(() => alert("Item successfully delete ho gaya hai."))
+                            .catch(err => alert("Error: " + err.message));
                     }
-                } else if (password) {
-                    alert("Galat Password!");
-                }
+                } else if (password) { alert("Galat Password!"); }
             }
         });
-        
         cartItemsContainer.addEventListener('click', (e) => {
             const updateBtn = e.target.closest('.update-quantity');
             const removeBtn = e.target.closest('.remove-from-cart');
             if (updateBtn) {
-                const itemId = parseInt(updateBtn.dataset.id);
+                const itemId = updateBtn.dataset.id;
                 const change = parseInt(updateBtn.dataset.change);
                 const itemInCart = cart.find(item => item.id === itemId);
                 if (itemInCart) {
@@ -359,11 +338,10 @@
                 }
             }
             if (removeBtn) {
-                cart = cart.filter(item => item.id !== parseInt(removeBtn.dataset.id));
+                cart = cart.filter(item => item.id !== removeBtn.dataset.id);
             }
             updateCartDisplay();
         });
-
         cartButton.addEventListener('click', () => cartModal.classList.remove('hidden'));
         closeCartButton.addEventListener('click', () => cartModal.classList.add('hidden'));
         checkoutBtn.addEventListener('click', () => {
@@ -384,69 +362,55 @@
                 filterAndRenderMenu(); 
                 adminPanel.classList.remove('hidden');
                 setTimeout(() => adminPanel.classList.remove('opacity-0'), 10);
-            } else if (password) {
-                alert("Galat Password!");
-            }
+            } else if (password) { alert("Galat Password!"); }
         });
-
         closeAdminPanelBtn.addEventListener('click', () => {
             adminPanel.classList.add('opacity-0');
-            setTimeout(() => {
-                adminPanel.classList.add('hidden');
-                addFoodForm.reset();
-                imagePreview.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { adminPanel.classList.add('hidden'); addFoodForm.reset(); imagePreview.classList.add('hidden'); }, 300);
         });
-
         imageUploadInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                 // FIX: Add file size check (2MB limit)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("Photo ka size 2MB se zyada hai. Kripya chhoti file upload karein.");
-                    imageUploadInput.value = ""; // Clear the input
-                    return;
-                }
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    imagePreview.src = event.target.result;
-                    imagePreview.classList.remove('hidden');
-                };
+                reader.onload = (event) => { imagePreview.src = event.target.result; imagePreview.classList.remove('hidden'); };
                 reader.readAsDataURL(file);
             }
         });
-
         addFoodForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const imageFile = imageUploadInput.files[0];
-            if (!imageFile) {
-                alert("Please ek photo upload karein.");
-                return;
-            }
+            if (!imageFile) { alert("Please ek photo upload karein."); return; }
+            
             const reader = new FileReader();
             reader.onloadend = () => {
+                const base64Image = reader.result; 
+                
                 const newItem = {
-                    id: Date.now(),
                     name: document.getElementById('food-name').value,
                     price: parseInt(document.getElementById('food-price').value),
                     description: document.getElementById('food-description').value,
-                    image: reader.result,
+                    image: base64Image,
                     type: document.getElementById('food-type').value,
                 };
-                menuData.push(newItem);
-                saveMenuData();
-                filterAndRenderMenu();
-                closeAdminPanelBtn.click();
-                alert(`'${newItem.name}' menu me add ho gaya hai!`);
+                
+                // FIREBASE: Add new item to Firestore
+                db.collection("menuItems").add(newItem)
+                    .then((docRef) => {
+                        alert(`'${newItem.name}' menu me add ho gaya hai!`);
+                        closeAdminPanelBtn.click();
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                        alert("Error: Item add nahi ho saka. Details ke liye console check karein.");
+                    });
             };
             reader.readAsDataURL(imageFile);
         });
 
         // --- INITIALIZATION ---
         document.getElementById('year').textContent = new Date().getFullYear();
-        loadMenuData();
         showSection(window.location.hash || '#home');
-        filterAndRenderMenu();
+        fetchMenuRealtime(); // Page load hote hi Firebase se menu load karo
     });
     </script>
 </body>
