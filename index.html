@@ -53,7 +53,7 @@
              <div class="relative h-screen text-white flex items-center justify-center text-center overflow-hidden">
                <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
                <video autoPlay loop muted playsInline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
-                   <source src="https://cdn.pixabay.com/video/2020/02/03/31000-393275804_large.mp4" type="video/mp4" />
+                   <source src="https://cdn.pixabay.com/video/2022/05/23/116757-715394982_large.mp4" type="video/mp4" />
                    Aapka browser video tag support nahi karta.
                </video>
                  <div class="relative z-20 p-4">
@@ -465,7 +465,6 @@
             db.collection("menuItems").add(newItem)
                 .then((docRef) => {
                     alert(`'${newItem.name}' menu me add ho gaya hai!`);
-                    // ✅ This line closes the panel automatically after adding an item.
                     closeAdminPanelBtn.click();
                 })
                 .catch((error) => {
