@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apna Restaurant - Swad wahi, jo dil ko chhu jaaye</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        #admin-panel { transition: opacity 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="bg-black bg-opacity-50 p-4 fixed w-full z-40 backdrop-blur-sm border-b border-gray-700/50">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#home" class="nav-link text-3xl font-bold text-white">
+                Roop<span class="text-amber-500">Restaurant</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link text-lg font-medium transition-colors duration-300 text-amber-500">Home</a>
+                <a href="#menu" class="nav-link text-lg font-medium transition-colors duration-300 hover:text-amber-400">Menu</a>
+                <a href="#contact" class="nav-link text-lg font-medium transition-colors duration-300 hover:text-amber-400">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="cart-button" class="relative text-white p-2 rounded-full hover:bg-gray-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </button>
+                <button class="bg-amber-500 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors">
+                    Login
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="section active">
+             <div class="relative h-screen text-white flex items-center justify-center text-center overflow-hidden">
+               <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
+               <video autoPlay loop muted playsInline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
+                   <source src="https://cdn.pixabay.com/video/2020/05/29/36423-424853023_large.mp4" type="video/mp4" />
+                   Aapka browser video tag support nahi karta.
+               </video>
+                <div class="relative z-20 p-4">
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Apna Restaurant</h1>
+                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Jahan har dish banti hai pyaar se, sirf aapke liye.</p>
+                    <a href="#menu" class="nav-link bg-amber-500 text-gray-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-amber-600 transition-transform transform hover:scale-105 duration-300 inline-block">
+                        Order Now
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="section py-24 px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white">Hamara Menu</h2>
+                <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Swad aur parampara ka anokha sangam.</p>
+            </div>
+            <div class="mb-10 max-w-4xl mx-auto">
+                <div class="relative mb-6">
+                    <input type="text" id="search-bar" placeholder="Apni pasand ki dish search karein..." class="w-full bg-gray-800 border-2 border-gray-700 rounded-full py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-amber-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <div id="filter-buttons" class="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
+                    <button data-filter="all" class="filter-btn px-4 py-2 rounded-full font-semibold transition-colors bg-amber-500 text-gray-900">All Items</button>
+                    <button data-filter="veg" class="filter-btn px-4 py-2 rounded-full font-semibold transition-colors bg-gray-700 hover:bg-gray-600">Veg</button>
+                    <button data-filter="non-veg" class="filter-btn px-4 py-2 rounded-full font-semibold transition-colors bg-gray-700 hover:bg-gray-600">Non-Veg</button>
+                </div>
+            </div>
+            <div id="menu-grid" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </section>
+
+        <section id="contact" class="section py-24 px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-extrabold">Humse Sampark Karein</h2>
+                <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Aapke sujhav hamare liye mahatvapurna hain.</p>
+            </div>
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-gray-800 p-8 rounded-lg shadow-2xl">
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-amber-400">Contact Information</h3>
+                    <p class="flex items-center text-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mr-3 text-amber-500"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> 123 Food Street, Lucknow, UP</p>
+                    <p class="flex items-center text-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone mr-3 text-amber-500"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> +91 91203 22488</p>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-amber-400 mb-4">Humein Message Bhejein</h3>
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Aapka Naam" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-amber-500" />
+                        <textarea placeholder="Aapka Sandesh" rows="3" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-amber-500"></textarea>
+                        <button type="submit" class="w-full bg-amber-500 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-amber-600 transition-colors duration-300">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto text-center">
+            <h3 class="text-2xl font-bold text-white mb-2">Apna<span class="text-amber-500">Restaurant</span></h3>
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://www.instagram.com/i.m.sahil.87" target="_blank" class="hover:text-amber-400">Instagram</a>
+            </div>
+            <p class="mb-4">&copy; <span id="year"></span> Apna Restaurant. All Rights Reserved.</p>
+            <a href="#" id="admin-login-btn" class="text-sm text-gray-500 hover:text-amber-400">Admin Login</a>
+        </div>
+    </footer>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-11/12 md:w-2/3 lg:w-1/2 max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="text-3xl font-bold text-white">Aapka Cart</h2>
+                <button id="close-cart-button" class="text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div id="cart-items" class="p-6 overflow-y-auto"></div>
+            <div id="cart-footer" class="p-6 mt-auto border-t border-gray-700 hidden">
+                <div class="flex justify-between items-center text-xl mb-4">
+                    <span class="text-gray-300">Subtotal:</span>
+                    <span id="cart-subtotal" class="font-bold text-white">₹0</span>
+                </div>
+                <button id="checkout-btn" class="w-full bg-green-600 text-white font-bold py-4 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 text-lg">
+                    WhatsApp par Order Karein
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="admin-panel" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center hidden opacity-0">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-11/12 max-w-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-white">Naya Food Item Add Karein</h2>
+                <button id="close-admin-panel-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <form id="add-food-form" class="space-y-4">
+                <input type="text" id="food-name" placeholder="Dish ka Naam" class="w-full p-3 bg-gray-700 rounded-md" required>
+                <input type="number" id="food-price" placeholder="Price" class="w-full p-3 bg-gray-700 rounded-md" required>
+                <textarea id="food-description" placeholder="Description" rows="3" class="w-full p-3 bg-gray-700 rounded-md" required></textarea>
+                <select id="food-type" class="w-full p-3 bg-gray-700 rounded-md" required>
+                    <option value="veg">Veg</option>
+                    <option value="non-veg">Non-Veg</option>
+                </select>
+                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein</label>
+                <input type="file" id="food-image-upload" accept="image/*" capture="environment" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-gray-900 hover:file:bg-amber-600" required>
+                <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-48 object-cover rounded-md mt-2">
+                <button type="submit" class="w-full bg-amber-500 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-amber-600">Add Item</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- DATA & CONFIG ---
+        let menuData = [];
+        let cart = [];
+        let isAdmin = false; // Admin mode flag
+        const ADMIN_PASSWORD = "9120322488"; // Yahan password set hai
+        const ADMIN_WHATSAPP = "919120322488";
+        // Shuruaati menu, agar local storage me kuch na ho to ye use hoga
+        const initialMenuData = [
+            { id: 1, name: "Paneer Tikka", price: 250, description: "Tandoor me bhuna hua masaledaar paneer.", image: "https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "veg" },
+            { id: 2, name: "Chicken Malai Kebab", price: 350, description: "Creamy aur juicy chicken kebab.", image: "https://images.pexels.com/photos/106344/pexels-photo-106344.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "non-veg" },
+            { id: 3, name: "Shahi Paneer", price: 320, description: "Mughlai gravy me bana creamy paneer.", image: "https://images.pexels.com/photos/4049941/pexels-photo-4049941.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "veg" },
+            { id: 4, name: "Butter Chicken", price: 450, description: "Hamara special makhani gravy wala chicken.", image: "https://images.pexels.com/photos/10580571/pexels-photo-10580571.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "non-veg" },
+        ];
+
+        // --- ELEMENTS ---
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const menuGrid = document.getElementById('menu-grid');
+        const searchBar = document.getElementById('search-bar');
+        const filterButtonsContainer = document.getElementById('filter-buttons');
+        const cartButton = document.getElementById('cart-button');
+        const closeCartButton = document.getElementById('close-cart-button');
+        const cartModal = document.getElementById('cart-modal');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartFooter = document.getElementById('cart-footer');
+        const cartSubtotalEl = document.getElementById('cart-subtotal');
+        const cartCountEl = document.getElementById('cart-count');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const adminPanel = document.getElementById('admin-panel');
+        const closeAdminPanelBtn = document.getElementById('close-admin-panel-btn');
+        const addFoodForm = document.getElementById('add-food-form');
+        const imageUploadInput = document.getElementById('food-image-upload');
+        const imagePreview = document.getElementById('image-preview');
+
+        // --- NEW: DATA MANAGEMENT (LOCAL STORAGE) ---
+        // Browser me data save karne ke liye functions
+        const saveMenuData = () => {
+            try {
+                localStorage.setItem('restaurantMenu', JSON.stringify(menuData));
+            } catch (e) {
+                console.error("Error saving to localStorage:", e);
+                alert("Error: Menu save nahi ho saka. Upload ki gayi image bahut badi ho sakti hai.");
+            }
+        };
+
+        const loadMenuData = () => {
+            const savedMenu = localStorage.getItem('restaurantMenu');
+            // Agar pehle se data save hai to use lo, nahi to initial data use karo
+            if (savedMenu) {
+                menuData = JSON.parse(savedMenu);
+            } else {
+                menuData = initialMenuData;
+                saveMenuData(); // Pehli baar ke liye initial data save kar do
+            }
+        };
+
+        // --- PAGE NAVIGATION ---
+        const showSection = (hash) => {
+            const id = hash ? hash.substring(1) : 'home';
+            sections.forEach(s => s.classList.toggle('active', s.id === id));
+            navLinks.forEach(l => {
+                l.classList.toggle('text-amber-500', l.getAttribute('href') === `#${id}`);
+                l.classList.toggle('hover:text-amber-400', l.getAttribute('href') !== `#${id}`);
+            });
+            window.scrollTo(0, 0);
+        };
+
+        navLinks.forEach(link => link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const hash = e.currentTarget.getAttribute('href');
+            history.pushState(null, null, hash);
+            showSection(hash);
+        }));
+        window.addEventListener('popstate', () => showSection(window.location.hash || '#home'));
+        
+        // --- MENU LOGIC ---
+        const renderMenu = (items) => {
+            menuGrid.innerHTML = items.length === 0 ? `<p class="text-gray-400 text-center col-span-full text-xl">Koi item nahi mila.</p>` : items.map(item => {
+                // MODIFIED: Ab admin mode me delete button dikhega
+                const adminControls = isAdmin ? `
+                    <div class="p-4 bg-gray-900">
+                        <button data-id="${item.id}" class="delete-item-btn w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                            Delete Item
+                        </button>
+                    </div>` : '';
+                return `
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col">
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-white">${item.name}</h3>
+                            <span class="px-3 py-1 text-sm rounded-full ${item.type === 'veg' ? 'bg-green-600' : 'bg-red-600'} text-white">
+                                ${item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                            </span>
+                        </div>
+                        <p class="text-gray-400 mb-4 flex-grow">${item.description}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-2xl font-bold text-amber-500">₹${item.price}</span>
+                            <button data-id="${item.id}" class="add-to-cart-btn bg-amber-500 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-amber-600">Add</button>
+                        </div>
+                    </div>
+                    ${adminControls}
+                </div>`;
+            }).join('');
+        };
+
+        const filterAndRenderMenu = () => {
+            const searchTerm = searchBar.value.toLowerCase();
+            const activeFilter = filterButtonsContainer.querySelector('.bg-amber-500').dataset.filter;
+            const filtered = menuData.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) && (activeFilter === 'all' || item.type === activeFilter)
+            );
+            renderMenu(filtered);
+        };
+
+        searchBar.addEventListener('input', filterAndRenderMenu);
+        filterButtonsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                filterButtonsContainer.querySelector('.bg-amber-500').classList.replace('bg-amber-500', 'bg-gray-700');
+                e.target.classList.replace('bg-gray-700', 'bg-amber-500');
+                filterAndRenderMenu();
+            }
+        });
+
+        // --- CART LOGIC ---
+        const updateCartDisplay = () => {
+            cartItemsContainer.innerHTML = cart.length === 0 ? `<p class="text-gray-400 text-center py-8">Aapka cart khaali hai.</p>` : cart.map(item => `
+                <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-700">
+                    <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-md object-cover mr-4">
+                    <div class="flex-grow"><h3 class="text-lg font-semibold text-white">${item.name}</h3><p class="text-amber-500 font-bold">₹${item.price}</p></div>
+                    <div class="flex items-center bg-gray-700 rounded-full">
+                        <button data-id="${item.id}" data-change="-1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-l-full">-</button>
+                        <span class="px-4 font-bold">${item.quantity}</span>
+                        <button data-id="${item.id}" data-change="1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-r-full">+</button>
+                    </div>
+                    <p class="text-lg font-bold w-24 text-right">₹${item.price * item.quantity}</p>
+                    <button data-id="${item.id}" class="remove-from-cart ml-4 text-red-500 text-2xl">&times;</button>
+                </div>
+            `).join('');
+            
+            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartSubtotalEl.textContent = `₹${subtotal}`;
+            cartCountEl.textContent = totalItems;
+            cartFooter.classList.toggle('hidden', cart.length === 0);
+            cartCountEl.classList.toggle('hidden', cart.length === 0);
+        };
+
+        // MODIFIED: menuGrid event listener ab 'Add' aur 'Delete' dono handle karega
+        menuGrid.addEventListener('click', (e) => {
+            const addBtn = e.target.closest('.add-to-cart-btn');
+            const deleteBtn = e.target.closest('.delete-item-btn');
+
+            if (addBtn) {
+                const itemId = parseInt(addBtn.dataset.id);
+                const itemToAdd = menuData.find(item => item.id === itemId);
+                const existingItem = cart.find(item => item.id === itemId);
+                if (existingItem) existingItem.quantity++;
+                else cart.push({ ...itemToAdd, quantity: 1 });
+                updateCartDisplay();
+            }
+
+            // NEW: Delete button ka logic
+            if (deleteBtn) {
+                const password = prompt("Item delete karne ke liye Admin Password daalein:");
+                if (password === ADMIN_PASSWORD) {
+                    if (confirm("Kya aap sach mein is item ko delete karna chahte hain?")) {
+                        const itemId = parseInt(deleteBtn.dataset.id);
+                        menuData = menuData.filter(item => item.id !== itemId);
+                        saveMenuData(); // Delete karne ke baad data save karo
+                        filterAndRenderMenu(); // Menu ko refresh karo
+                        alert("Item successfully delete ho gaya hai.");
+                    }
+                } else if (password) { // Agar password dala hai par galat hai
+                    alert("Galat Password!");
+                }
+            }
+        });
+        
+        cartItemsContainer.addEventListener('click', (e) => {
+            const updateBtn = e.target.closest('.update-quantity');
+            const removeBtn = e.target.closest('.remove-from-cart');
+            if (updateBtn) {
+                const itemId = parseInt(updateBtn.dataset.id);
+                const change = parseInt(updateBtn.dataset.change);
+                const itemInCart = cart.find(item => item.id === itemId);
+                if (itemInCart) {
+                    itemInCart.quantity += change;
+                    if (itemInCart.quantity <= 0) cart = cart.filter(item => item.id !== itemId);
+                }
+            }
+            if (removeBtn) {
+                cart = cart.filter(item => item.id !== parseInt(removeBtn.dataset.id));
+            }
+            updateCartDisplay();
+        });
+
+        cartButton.addEventListener('click', () => cartModal.classList.remove('hidden'));
+        closeCartButton.addEventListener('click', () => cartModal.classList.add('hidden'));
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) return;
+            let message = "Namaste Apna Restaurant, mujhe yeh order karna hai:\n\n" + 
+                cart.map(item => `*${item.name}* - ${item.quantity} x ₹${item.price} = ₹${item.quantity * item.price}`).join('\n') + // Bug fix: item.quantity * item.quantity tha
+                `\n\n*Total Bill:* ₹${cart.reduce((s, i) => s + i.price * i.quantity, 0)}`;
+            window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
+        });
+
+        // --- ADMIN LOGIC ---
+        adminLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const password = prompt("Admin Password Daalein:");
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                alert("Admin mode active ho gaya hai!");
+                filterAndRenderMenu(); // MODIFIED: Menu ko re-render karo taaki delete buttons dikhein
+                adminPanel.classList.remove('hidden');
+                setTimeout(() => adminPanel.classList.remove('opacity-0'), 10);
+            } else if (password) {
+                alert("Galat Password!");
+            }
+        });
+
+        closeAdminPanelBtn.addEventListener('click', () => {
+            adminPanel.classList.add('opacity-0');
+            setTimeout(() => {
+                adminPanel.classList.add('hidden');
+                addFoodForm.reset();
+                imagePreview.classList.add('hidden');
+            }, 300);
+        });
+
+        imageUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        addFoodForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const imageFile = imageUploadInput.files[0];
+            if (!imageFile) {
+                alert("Please ek photo upload karein.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const newItem = {
+                    id: Date.now(), // Unique ID
+                    name: document.getElementById('food-name').value,
+                    price: parseInt(document.getElementById('food-price').value),
+                    description: document.getElementById('food-description').value,
+                    image: reader.result, // Base64 Image Data
+                    type: document.getElementById('food-type').value,
+                };
+                menuData.push(newItem);
+                saveMenuData(); // MODIFIED: Naya item add karne ke baad data save karo
+                filterAndRenderMenu();
+                closeAdminPanelBtn.click();
+                alert(`'${newItem.name}' menu me add ho gaya hai!`);
+            };
+            reader.readAsDataURL(imageFile);
+        });
+
+        // --- INITIALIZATION ---
+        document.getElementById('year').textContent = new Date().getFullYear();
+        loadMenuData(); // MODIFIED: Page load hote hi local storage se data load karo
+        showSection(window.location.hash || '#home');
+        filterAndRenderMenu();
+    });
+    </script>
+</body>
+</html>
