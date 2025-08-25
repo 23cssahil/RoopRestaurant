@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apna Restaurant - Swad wahi, jo dil ko chhu jaaye</title>
     
+    <link rel="icon" href="data:,">
+
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -22,6 +24,11 @@
         .section { display: none; }
         .section.active { display: block; }
         #admin-panel { transition: opacity 0.3s ease-in-out; }
+
+        /* ✅ VIDEO REPLACEMENT: New style for background image */
+        #home {
+            background: url('https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
+        }
     </style>
 </head>
 <body class="text-white">
@@ -50,13 +57,9 @@
 
     <main>
         <section id="home" class="section active">
-             <div class="relative h-screen text-white flex items-center justify-center text-center overflow-hidden">
+             <div class="relative h-screen text-white flex items-center justify-center text-center">
                <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
-               <video autoPlay loop muted playsInline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
-                   <source src="https://cdn.pixabay.com/video/2022/05/23/116757-715394982_large.mp4" type="video/mp4" />
-                   Aapka browser video tag support nahi karta.
-               </video>
-                 <div class="relative z-20 p-4">
+               <div class="relative z-20 p-4">
                      <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Apna Restaurant</h1>
                      <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Jahan har dish banti hai pyaar se, sirf aapke liye.</p>
                      <a href="#menu" class="nav-link bg-amber-500 text-gray-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-amber-600 transition-transform transform hover:scale-105 duration-300 inline-block">
