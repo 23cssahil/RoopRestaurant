@@ -29,7 +29,7 @@
 
     <header class="bg-black bg-opacity-50 p-4 fixed w-full z-40 backdrop-blur-sm border-b border-gray-700/50">
         <nav class="container mx-auto flex justify-between items-center">
-            <a href="#home" class="nav-link text-3xl font-bold text-white">
+            <a href="#home" class="nav-link text-2xl sm:text-3xl font-bold text-white">
                 Roop<span class="text-amber-500">Restaurant</span>
             </a>
             <div class="hidden md:flex items-center space-x-8">
@@ -37,12 +37,12 @@
                 <a href="#menu" class="nav-link text-lg font-medium transition-colors duration-300 hover:text-amber-400">Menu</a>
                 <a href="#contact" class="nav-link text-lg font-medium transition-colors duration-300 hover:text-amber-400">Contact</a>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4">
                 <button id="cart-button" class="relative text-white p-2 rounded-full hover:bg-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
-                <button class="bg-amber-500 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors">
+                <button class="bg-amber-500 text-gray-900 font-semibold py-2 px-3 sm:px-4 rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base">
                     Login
                 </button>
             </div>
@@ -57,14 +57,14 @@
                    <source src="https://cdn.pixabay.com/video/2020/05/29/36423-424853023_large.mp4" type="video/mp4" />
                    Aapka browser video tag support nahi karta.
                </video>
-                <div class="relative z-20 p-4">
-                    <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Apna Restaurant</h1>
-                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Jahan har dish banti hai pyaar se, sirf aapke liye.</p>
-                    <a href="#menu" class="nav-link bg-amber-500 text-gray-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-amber-600 transition-transform transform hover:scale-105 duration-300 inline-block">
-                        Order Now
-                    </a>
-                </div>
-            </div>
+                 <div class="relative z-20 p-4">
+                     <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">Apna Restaurant</h1>
+                     <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Jahan har dish banti hai pyaar se, sirf aapke liye.</p>
+                     <a href="#menu" class="nav-link bg-amber-500 text-gray-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-amber-600 transition-transform transform hover:scale-105 duration-300 inline-block">
+                         Order Now
+                     </a>
+                 </div>
+             </div>
         </section>
 
         <section id="menu" class="section py-24 px-4 sm:px-6 lg:px-8">
@@ -129,7 +129,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
             </div>
-            <div id="cart-items" class="p-6 overflow-y-auto"></div>
+            <div id="cart-items" class="p-4 sm:p-6 overflow-y-auto"></div>
             <div id="cart-footer" class="p-6 mt-auto border-t border-gray-700 hidden">
                 <div class="flex justify-between items-center text-xl mb-4">
                     <span class="text-gray-300">Subtotal:</span>
@@ -156,8 +156,8 @@
                     <option value="veg">Veg</option>
                     <option value="non-veg">Non-Veg</option>
                 </select>
-                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein</label>
-                <input type="file" id="food-image-upload" accept="image/*" capture="environment" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-gray-900 hover:file:bg-amber-600" required>
+                <label for="food-image-upload" class="block text-sm font-medium text-gray-300">Food Photo Upload Karein (Size 2MB se kam)</label>
+                <input type="file" id="food-image-upload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-gray-900 hover:file:bg-amber-600" required>
                 <img id="image-preview" src="" alt="Image Preview" class="hidden w-full h-48 object-cover rounded-md mt-2">
                 <button type="submit" class="w-full bg-amber-500 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-amber-600">Add Item</button>
             </form>
@@ -170,10 +170,9 @@
         // --- DATA & CONFIG ---
         let menuData = [];
         let cart = [];
-        let isAdmin = false; // Admin mode flag
-        const ADMIN_PASSWORD = "9120322488"; // Yahan password set hai
+        let isAdmin = false; 
+        const ADMIN_PASSWORD = "9120322488";
         const ADMIN_WHATSAPP = "919120322488";
-        // Shuruaati menu, agar local storage me kuch na ho to ye use hoga
         const initialMenuData = [
             { id: 1, name: "Paneer Tikka", price: 250, description: "Tandoor me bhuna hua masaledaar paneer.", image: "https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "veg" },
             { id: 2, name: "Chicken Malai Kebab", price: 350, description: "Creamy aur juicy chicken kebab.", image: "https://images.pexels.com/photos/106344/pexels-photo-106344.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", type: "non-veg" },
@@ -202,25 +201,23 @@
         const imageUploadInput = document.getElementById('food-image-upload');
         const imagePreview = document.getElementById('image-preview');
 
-        // --- NEW: DATA MANAGEMENT (LOCAL STORAGE) ---
-        // Browser me data save karne ke liye functions
+        // --- DATA MANAGEMENT (LOCAL STORAGE) ---
         const saveMenuData = () => {
             try {
                 localStorage.setItem('restaurantMenu', JSON.stringify(menuData));
             } catch (e) {
                 console.error("Error saving to localStorage:", e);
-                alert("Error: Menu save nahi ho saka. Upload ki gayi image bahut badi ho sakti hai.");
+                alert("Error: Menu save nahi ho saka. Upload ki gayi image bahut badi ho sakti hai. Kripya 2MB se chhoti image upload karein.");
             }
         };
 
         const loadMenuData = () => {
             const savedMenu = localStorage.getItem('restaurantMenu');
-            // Agar pehle se data save hai to use lo, nahi to initial data use karo
             if (savedMenu) {
                 menuData = JSON.parse(savedMenu);
             } else {
                 menuData = initialMenuData;
-                saveMenuData(); // Pehli baar ke liye initial data save kar do
+                saveMenuData();
             }
         };
 
@@ -246,7 +243,6 @@
         // --- MENU LOGIC ---
         const renderMenu = (items) => {
             menuGrid.innerHTML = items.length === 0 ? `<p class="text-gray-400 text-center col-span-full text-xl">Koi item nahi mila.</p>` : items.map(item => {
-                // MODIFIED: Ab admin mode me delete button dikhega
                 const adminControls = isAdmin ? `
                     <div class="p-4 bg-gray-900">
                         <button data-id="${item.id}" class="delete-item-btn w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
@@ -259,7 +255,7 @@
                     <div class="p-6 flex flex-col flex-grow">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-bold text-white">${item.name}</h3>
-                            <span class="px-3 py-1 text-sm rounded-full ${item.type === 'veg' ? 'bg-green-600' : 'bg-red-600'} text-white">
+                            <span class="flex-shrink-0 ml-2 px-3 py-1 text-sm rounded-full ${item.type === 'veg' ? 'bg-green-600' : 'bg-red-600'} text-white">
                                 ${item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                             </span>
                         </div>
@@ -294,17 +290,22 @@
 
         // --- CART LOGIC ---
         const updateCartDisplay = () => {
+             // FIX: More responsive cart item layout
             cartItemsContainer.innerHTML = cart.length === 0 ? `<p class="text-gray-400 text-center py-8">Aapka cart khaali hai.</p>` : cart.map(item => `
-                <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-700">
-                    <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-md object-cover mr-4">
-                    <div class="flex-grow"><h3 class="text-lg font-semibold text-white">${item.name}</h3><p class="text-amber-500 font-bold">₹${item.price}</p></div>
-                    <div class="flex items-center bg-gray-700 rounded-full">
-                        <button data-id="${item.id}" data-change="-1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-l-full">-</button>
-                        <span class="px-4 font-bold">${item.quantity}</span>
-                        <button data-id="${item.id}" data-change="1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-r-full">+</button>
+                <div class="flex items-center gap-4 mb-4 pb-4 border-b border-gray-700">
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-md object-cover flex-shrink-0">
+                    <div class="flex-grow">
+                        <h3 class="text-base sm:text-lg font-semibold text-white">${item.name}</h3>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2">
+                           <div class="flex items-center bg-gray-700 rounded-full w-max mb-2 sm:mb-0">
+                                <button data-id="${item.id}" data-change="-1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-l-full">-</button>
+                                <span class="px-3 sm:px-4 font-bold text-sm sm:text-base">${item.quantity}</span>
+                                <button data-id="${item.id}" data-change="1" class="update-quantity p-2 text-white hover:bg-gray-600 rounded-r-full">+</button>
+                            </div>
+                            <p class="text-base sm:text-lg font-bold text-amber-400">₹${item.price * item.quantity}</p>
+                        </div>
                     </div>
-                    <p class="text-lg font-bold w-24 text-right">₹${item.price * item.quantity}</p>
-                    <button data-id="${item.id}" class="remove-from-cart ml-4 text-red-500 text-2xl">&times;</button>
+                    <button data-id="${item.id}" class="remove-from-cart text-red-500 hover:text-red-400 flex-shrink-0 text-2xl sm:text-3xl">&times;</button>
                 </div>
             `).join('');
             
@@ -316,7 +317,6 @@
             cartCountEl.classList.toggle('hidden', cart.length === 0);
         };
 
-        // MODIFIED: menuGrid event listener ab 'Add' aur 'Delete' dono handle karega
         menuGrid.addEventListener('click', (e) => {
             const addBtn = e.target.closest('.add-to-cart-btn');
             const deleteBtn = e.target.closest('.delete-item-btn');
@@ -330,18 +330,17 @@
                 updateCartDisplay();
             }
 
-            // NEW: Delete button ka logic
             if (deleteBtn) {
                 const password = prompt("Item delete karne ke liye Admin Password daalein:");
                 if (password === ADMIN_PASSWORD) {
                     if (confirm("Kya aap sach mein is item ko delete karna chahte hain?")) {
                         const itemId = parseInt(deleteBtn.dataset.id);
                         menuData = menuData.filter(item => item.id !== itemId);
-                        saveMenuData(); // Delete karne ke baad data save karo
-                        filterAndRenderMenu(); // Menu ko refresh karo
+                        saveMenuData();
+                        filterAndRenderMenu();
                         alert("Item successfully delete ho gaya hai.");
                     }
-                } else if (password) { // Agar password dala hai par galat hai
+                } else if (password) {
                     alert("Galat Password!");
                 }
             }
@@ -370,7 +369,7 @@
         checkoutBtn.addEventListener('click', () => {
             if (cart.length === 0) return;
             let message = "Namaste Apna Restaurant, mujhe yeh order karna hai:\n\n" + 
-                cart.map(item => `*${item.name}* - ${item.quantity} x ₹${item.price} = ₹${item.quantity * item.price}`).join('\n') + // Bug fix: item.quantity * item.quantity tha
+                cart.map(item => `*${item.name}* - ${item.quantity} x ₹${item.price} = ₹${item.quantity * item.price}`).join('\n') +
                 `\n\n*Total Bill:* ₹${cart.reduce((s, i) => s + i.price * i.quantity, 0)}`;
             window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
         });
@@ -382,7 +381,7 @@
             if (password === ADMIN_PASSWORD) {
                 isAdmin = true;
                 alert("Admin mode active ho gaya hai!");
-                filterAndRenderMenu(); // MODIFIED: Menu ko re-render karo taaki delete buttons dikhein
+                filterAndRenderMenu(); 
                 adminPanel.classList.remove('hidden');
                 setTimeout(() => adminPanel.classList.remove('opacity-0'), 10);
             } else if (password) {
@@ -402,6 +401,12 @@
         imageUploadInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                 // FIX: Add file size check (2MB limit)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Photo ka size 2MB se zyada hai. Kripya chhoti file upload karein.");
+                    imageUploadInput.value = ""; // Clear the input
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     imagePreview.src = event.target.result;
@@ -421,15 +426,15 @@
             const reader = new FileReader();
             reader.onloadend = () => {
                 const newItem = {
-                    id: Date.now(), // Unique ID
+                    id: Date.now(),
                     name: document.getElementById('food-name').value,
                     price: parseInt(document.getElementById('food-price').value),
                     description: document.getElementById('food-description').value,
-                    image: reader.result, // Base64 Image Data
+                    image: reader.result,
                     type: document.getElementById('food-type').value,
                 };
                 menuData.push(newItem);
-                saveMenuData(); // MODIFIED: Naya item add karne ke baad data save karo
+                saveMenuData();
                 filterAndRenderMenu();
                 closeAdminPanelBtn.click();
                 alert(`'${newItem.name}' menu me add ho gaya hai!`);
@@ -439,7 +444,7 @@
 
         // --- INITIALIZATION ---
         document.getElementById('year').textContent = new Date().getFullYear();
-        loadMenuData(); // MODIFIED: Page load hote hi local storage se data load karo
+        loadMenuData();
         showSection(window.location.hash || '#home');
         filterAndRenderMenu();
     });
