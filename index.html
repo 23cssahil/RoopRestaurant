@@ -53,7 +53,7 @@
              <div class="relative h-screen text-white flex items-center justify-center text-center overflow-hidden">
                <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
                <video autoPlay loop muted playsInline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
-                   <source src="https://cdn.pixabay.com/video/2020/05/29/36423-424853023_large.mp4" type="video/mp4" />
+                   <source src="https://cdn.pixabay.com/video/2020/02/03/31000-393275804_large.mp4" type="video/mp4" />
                    Aapka browser video tag support nahi karta.
                </video>
                  <div class="relative z-20 p-4">
@@ -228,7 +228,6 @@
         const addFoodForm = document.getElementById('add-food-form');
         const imageUploadInput = document.getElementById('food-image-upload');
         const imagePreview = document.getElementById('image-preview');
-        // ✅ NEW: Camera Elements
         const takePhotoBtn = document.getElementById('take-photo-btn');
         const cameraView = document.getElementById('camera-view');
         const cameraStreamEl = document.getElementById('camera-stream');
@@ -416,7 +415,6 @@
             }
         });
 
-        // ✅ NEW: Camera Logic
         takePhotoBtn.addEventListener('click', async () => {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 try {
@@ -447,7 +445,6 @@
             stopCamera();
         });
 
-        // ✅ MODIFIED: Form Submission Logic
         addFoodForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -461,14 +458,14 @@
                 name: document.getElementById('food-name').value,
                 price: parseInt(document.getElementById('food-price').value),
                 description: document.getElementById('food-description').value,
-                image: base64Image, // Directly use base64 from preview
+                image: base64Image,
                 type: document.getElementById('food-type').value,
             };
             
             db.collection("menuItems").add(newItem)
                 .then((docRef) => {
                     alert(`'${newItem.name}' menu me add ho gaya hai!`);
-                    // ✅ FIX: Auto-close the panel on success
+                    // ✅ This line closes the panel automatically after adding an item.
                     closeAdminPanelBtn.click();
                 })
                 .catch((error) => {
